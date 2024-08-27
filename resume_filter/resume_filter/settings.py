@@ -62,6 +62,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # Developer Added middlewares
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'resume_filter.urls'

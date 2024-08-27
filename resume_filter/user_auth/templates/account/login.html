@@ -1,0 +1,47 @@
+{% extends "account/authentication_wrapper.html" %}
+{% load i18n %}
+{% load allauth account socialaccount %}
+
+{% block head_title %}
+    {% trans "Sign In" %}
+{% endblock head_title %}
+{% block content %}
+    {% if not SOCIALACCOUNT_ONLY %}
+        <div class="wrapper">
+            <h1>Resume Filter</h1>
+            {% url 'custom_login' as login_url %}
+            {% element form form=form method="post" action=login_url tags="entrance,login" %}
+                {% slot body %}
+                    {% csrf_token %}
+                    <div class="input-box">
+                        {{ form.login }}
+                        <i class='bx bxs-user'></i>
+                    </div>
+                    <div class="input-box">
+                        {{ form.password }}
+                        <i class='bx bxs-lock-alt'></i>
+                    </div>
+                    <div class="remember-forgot">
+                        <label>
+                            {{ form.remember }} Remember me
+                        </label>
+                        <a href="{% url 'account_reset_password' %}">Forgot password?</a>
+                    </div>
+                    {{ redirect_field }}
+                {% endslot %}
+                {% slot actions %}
+                    <button type="submit" class="btn">Login</button>
+                    <div class="register-link">
+                        <p>Don't have an account?<a href="{{ signup_url }}"> Register</a></p>
+                    </div>
+                    <hr>
+                    <div class="social-login">
+                        <button type="submit" class="btn-gmail">
+                            <a href="{% provider_login_url 'google' %}">Continue with Gmail</a>
+                        </button>
+                    </div>
+                {% endslot %}
+            {% endelement %}
+        </div>
+    {% endif %}
+{% endblock %}
