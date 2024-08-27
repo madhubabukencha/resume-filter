@@ -1,0 +1,27 @@
+{% extends "account/authentication_wrapper.html" %}
+{% load i18n %}
+{% load allauth account socialaccount %}
+{% load custom_filters %}
+
+{% block head_title %}
+    {% trans "Verify Your Email Address" %}
+{% endblock head_title %}
+{% block content %}
+    <div class="wrapper">
+        <h1>Verify Your Email Address</h1>
+        <hr>
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <center><h4 style="color:#3C3D37;">{{ message.message|extract_email }}</h4></center>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <p style="text-align: justify; text-justify: inter-word;">
+            We have sent an email to you for verification. Follow the link provided to
+            finalize the signup process. If you do not see the verification email in your
+            main inbox, check your spam folder. Please contact us if you do not receive the
+            verification email within a few minutes.
+        </p>
+    </div>
+{% endblock %}
