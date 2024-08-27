@@ -14,9 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from allauth.account.views import LoginView
+from user_auth.custom_forms.login_form import CustomLoginForm
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('resume-filter-db/', admin.site.urls),
+    path('', LoginView.as_view(), name="custom_login"),
+    path("accounts/", include("allauth.urls")),
+    path("auth/", include("allauth.socialaccount.urls"))
 ]
