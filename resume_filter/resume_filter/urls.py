@@ -18,7 +18,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from allauth.account.views import LoginView
-from user_auth.custom_forms.login_form import CustomLoginForm
 
 
 urlpatterns = [
