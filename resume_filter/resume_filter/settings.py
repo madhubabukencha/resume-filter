@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
     # custom apps
     'user_auth.apps.UserAuthConfig',
+    'resume_parser.apps.ResumeParserConfig',
 
     # Third Party apps
     'allauth',
