@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Jersey+10&display=swap');
+
+/*
+The * means "all elements" (a universal selector), so we are
+setting all elements to have zero margins, and zero padding, 
+thus making them look 
+the same in all browsers. */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;  /* https://www.w3schools.com/css/css3_box-sizing.asp */
+    font-family: "Poppins", "sans-serif";
+}
+
+
+body {
+    background-image: url("images/home-bg.jpg");
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background:rgba(0, 0, 0, 0.5); /* Transparent black background */
+    backdrop-filter: blur(5px); /* Glassy effect */
+    color: white; /* Text color for header */
+}
+
+header nav ul {
+    list-style: none; /* Remove bullets */
+    padding: 0; /* Remove default padding */
+}
+
+header nav ul li {
+    display: inline-block; /* Display as inline elements */
+    padding-top: 10px;
+    padding-left: 50px;
+}
+
+header nav ul li a {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit color from parent */
+}
+
+header nav ul li a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
