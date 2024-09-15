@@ -24,6 +24,17 @@ body {
     min-height: 100vh;
 }
 
+/* CSS for background video */
+#myVideo {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;  /* Ensures the video covers the entire screen */
+    z-index: -1;        /* Make sure the video stays behind other elements */
+}
+
 .login-messages {
     margin-right: 40px;
     border-radius: 20px;
@@ -40,16 +51,6 @@ body {
     color: #fff;
     text-align: center;
 }
-
-#myVideo {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;  /* Ensures the video covers the entire screen */
-    z-index: -1;        /* Make sure the video stays behind other elements */
-  }
 
 .wrapper {
     width: 420px;

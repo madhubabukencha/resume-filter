@@ -13,7 +13,7 @@
         {% if messages %}
             <div>
                 {% for message in messages %}
-                    <center><h4 style="color:#3C3D37;">{{ message.message|extract_email }}</h4></center>
+                    <center><h6 style="color:#3C3D37; text-align: justify; text-justify: inter-word; word-wrap: break-word;">{{ message.message|extract_email }}</h6></center>
                 {% endfor %}
             </div>
         {% endif %}

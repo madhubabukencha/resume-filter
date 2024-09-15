@@ -24,5 +24,6 @@ urlpatterns = [
     path('resume-filter-db/', admin.site.urls),
     path('', LoginView.as_view(), name="custom_login"),
     path("accounts/", include("allauth.urls")),
-    path("auth/", include("allauth.socialaccount.urls"))
+    path("auth/", include("allauth.socialaccount.urls")),
+    path("home/", include("resume_parser.urls")),
 ]

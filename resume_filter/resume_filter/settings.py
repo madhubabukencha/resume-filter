@@ -156,7 +156,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 
 # Login Settings
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'resume-filter-home'
 LOGOUT_REDIRECT_URL = '/'
 
 # Signup Settings
