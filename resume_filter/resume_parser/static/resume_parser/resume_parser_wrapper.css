@@ -14,13 +14,17 @@ the same in all browsers. */
     font-family: "Poppins", "sans-serif";
 }
 
-
+/* Complete Body Styles */
 body {
     background-image: url("images/home-bg.jpg");
     background-size: 100%;
-    background-position: center;
+    background-position: bottom;
     background-repeat: no-repeat;
     min-height: 100vh;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 header {
@@ -32,8 +36,8 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background:rgba(0, 0, 0, 0.5); /* Transparent black background */
-    backdrop-filter: blur(5px); /* Glassy effect */
+    background:rgba(190, 49, 49, 0.5); /* Transparent black background */
+    backdrop-filter: blur(10px); /* Glassy effect */
     color: white; /* Text color for header */
 }
 
@@ -56,4 +60,50 @@ header nav ul li a {
 header nav ul li a:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.custom-dropdown {
+    text-align: center;
+    background:rgba(190, 49, 49, 0.5); /* Transparent black background */
+    backdrop-filter: blur(10px); /* Glassy effect */
+    width: 200px;
+
+}
+.custom-dropdown a {
+    color: white;
+    font-weight: bold; 
+}
+
+.wrapper {
+    width: 500px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    background:rgba(190, 49, 49, 0.5); /* Transparent black background */
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px 40px;
+}
+
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: rgb(127, 119, 240);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: deepskyblue;
+}
+
+.file-input {
+    display: none;  /* Hide the default file input */
 }

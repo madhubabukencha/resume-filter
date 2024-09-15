@@ -1,0 +1,3 @@
+- Fix issue with messages sometimes login and logout messages are coming
+  and close button not working
+-
