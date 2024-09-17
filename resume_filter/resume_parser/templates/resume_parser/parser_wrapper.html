@@ -35,12 +35,12 @@
                 </ul>
             </nav>
       
-            <div class="dropdown" style="max-width: 200px;">
-                <button class="btn btn-outline-warning dropdown-toggle"
+            <div class="dropdown">
+                <button class="btn btn-outline-warning dropdown-toggle" style="min-width: 200px;"
                         type="button" id="dropdownMenuButton1"
                         data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        {{ user.username }}
+                        {{ user.username | truncatechars:25 }}
                 </button>
                 <ul class="dropdown-menu custom-dropdown" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="#">Usage Docs</a></li>
