@@ -31,6 +31,17 @@
         </video>
 
         {% block body %}
+             <!-- Display messages -->
+            {% if messages %}
+                <div style="margin: 30px;">
+                    {% for message in messages %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <center>{{ message }}</center>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {% if form.errors %}
                 <div class="login-messages alert alert-dismissible fade show" role="alert">
                     <h6> Kindly Check Below Problems </h6>
