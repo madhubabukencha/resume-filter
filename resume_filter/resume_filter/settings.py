@@ -142,6 +142,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ################### User Defined Settings ######################
+
+# Media directories
+# Define documents directory as the media directory
+MEDIA_URL = '/documents/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'documents/')
+
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Default ModelBackend
     'allauth.account.auth_backends.AuthenticationBackend',  # Allauth authentication backend for social authentication

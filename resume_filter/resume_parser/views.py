@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Document
 from .forms import DocumentUploadForm
 from django.contrib import messages
+from django.urls import reverse_lazy
 
 
 class DocumentUploadView(LoginRequiredMixin, CreateView):
@@ -33,4 +34,17 @@ class DocumentListView(LoginRequiredMixin, ListView):
     template_name = 'resume_parser/uploaded_docs.html'
 
     def get_queryset(self):
-        return Document.objects.filter(user=self.request.user)
+        # -uploaded_date: The minus sign (-) before the field name orders the
+        #  queryset in descending order. Without the minus sign, it would be in 
+        # ascending order (oldest to newest).
+        return Document.objects.filter(user=self.request.user).order_by('-uploaded_date')
+
+
+class DocumentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Document
+    template_name = 'resume_parser/document_confirm_delete.html'
+    success_url = reverse_lazy('uploaded-docs')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Document has been deleted.")
+        return super().delete(request, *args, **kwargs)

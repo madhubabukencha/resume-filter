@@ -11,7 +11,7 @@ def user_directory_path(instance, filename):
     # Generate a unique file name by appending the UUID before the file extension
     extension = filename.split('.')[-1]
     new_filename = f"{uuid.uuid4()}.{extension}"
-    return f'documents/{instance.user.username}/{new_filename}'
+    return f'{instance.user.username}/{new_filename}'
 
 
 class Document(models.Model):
