@@ -7,9 +7,9 @@ from .forms import DocumentUploadForm
 from django.contrib import messages
 
 
-class AboutView(LoginRequiredMixin, CreateView):
+class DocumentUploadView(LoginRequiredMixin, CreateView):
     """
-    View for Document upload
+    View for uploading document
     """
     model = Document
     form_class = DocumentUploadForm
@@ -23,15 +23,14 @@ class AboutView(LoginRequiredMixin, CreateView):
     
     def get_success_url(self):
         """
-        It will redirect to specified resume-filter-home once
-        document is uploaded
+        It will redirect to resume-filter-home once document is uploaded
         """
         return reverse('resume-filter-home')
 
 
-# class DocumentListView(LoginRequiredMixin, ListView):
-#     model = Document
-#     template_name = 'resume_parser/list.html'
+class DocumentListView(LoginRequiredMixin, ListView):
+    model = Document
+    template_name = 'resume_parser/uploaded_docs.html'
 
-#     def get_queryset(self):
-#         return Document.objects.filter(user=self.request.user)
+    def get_queryset(self):
+        return Document.objects.filter(user=self.request.user)

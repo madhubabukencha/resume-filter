@@ -6,13 +6,14 @@ import uuid
 # HELP FUNCTIONS
 def user_directory_path(instance, filename):
     """
-    This function create a directory with username inside document 
-    directory. Inside username directory you will find your uploaded file.
+    Save the file with a unique identifier in the username's directory.
     """
-    return f'documents/{instance.user.username}/{filename}'
+    # Generate a unique file name by appending the UUID before the file extension
+    extension = filename.split('.')[-1]
+    new_filename = f"{uuid.uuid4()}.{extension}"
+    return f'documents/{instance.user.username}/{new_filename}'
 
 
-# Create your models here.
 class Document(models.Model):
     """
     Model for Document upload
@@ -21,6 +22,14 @@ class Document(models.Model):
     unique_identifier = models.UUIDField(default=uuid.uuid4, editable=False)
     file = models.FileField(upload_to=user_directory_path)
     uploaded_date = models.DateTimeField(auto_now_add=True)
+    original_filename = models.CharField(max_length=255)  # Store the original file name
 
     def __str__(self):
-        return f"{self.file.name}"
+        return self.original_filename  # Display original file name
+
+    def save(self, *args, **kwargs):
+        # If this is a new file upload (i.e., no existing file), store the original file name
+        if not self.pk:
+            self.original_filename = self.file.name
+
+        super().save(*args, **kwargs)

@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import AboutView
+from .views import  DocumentUploadView, DocumentListView
 
 urlpatterns = [
-    path("", AboutView.as_view(), name="resume-filter-home")
+    path("", DocumentUploadView.as_view(), name="resume-filter-home"),
+    path("uploaded-docs/", DocumentListView.as_view(), name="uploaded-docs")
 ]
