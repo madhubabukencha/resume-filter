@@ -53,12 +53,28 @@ header nav ul li {
 }
 
 header nav ul li a {
+    position: relative;
     text-decoration: none; /* Remove underline */
     color: inherit; /* Inherit color from parent */
 }
 
+header nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: currentColor; /* Use the same color as the text */
+    left: 0;
+    bottom: -5px; /* Adjust the position of the underline */
+    transition: width 0.3s ease-in-out; /* Smooth transition for the underline */
+}
+
+header nav ul li a:hover::after {
+    width: 100%; /* Expand the underline on hover */
+    background-color: #04000c;
+}
+
 header nav ul li a:hover {
-    text-decoration: underline;
     cursor: pointer;
 }
 

@@ -3,32 +3,25 @@
 {% load allauth account socialaccount %}
 
 {% block head_title %}
-    {% trans "Upload Docs" %}
+    {% trans "Uploaded Docs" %}
 {% endblock head_title %}
 
 {% block content %}
     <div class="wrapper">
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="file-upload" class="custom-file-upload">Choose File <i class='bx bxs-file-pdf'></i></label>
-            {{ form.file }}
-
-            <!--Uploaded file name will be displayer here-->
-            <p id="file-name-display" style="text-align:center; margin-top:10px;"></p>
-
-            <center>
-                <button type="submit" class="btn btn-outline-warning"
-                            style="padding:10px 60px;font-weight: bold; color: white;">
-                            Upload a File
-                </button>
-            </center>
-        </form>  
+        {% if object_list %}
+            <ul>
+                {% for document in object_list %}
+                    <li>
+                        <a href="{{ document.file.url }}" target="_blank">
+                            {{ document.file.name | slice:"10:" }} <!-- Show the filename -->
+                        </a> 
+                        (Uploaded on: {{ document.uploaded_date|date:"Y-m-d H:i" }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You haven't uploaded any documents yet.</p>
+        {% endif %}
     </div>
-    <script>
-        document.getElementById('file-upload').addEventListener('change', function(e) {
-            var fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
-            document.getElementById('file-name-display').innerText = fileName;  // Display the file name
-        });
-    </script>
 {% endblock %}
 

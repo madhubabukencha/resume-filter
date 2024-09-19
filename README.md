@@ -41,6 +41,10 @@ for detailed instructions: [Google Configuration Setup](https://github.com/madhu
   EMAIL_HOST_PASSWORD='your_email_host_password'
   ```
 ### Database Setup
+- Change directory to
+  ```
+  cd resume-filter/resume_filter
+  ```
 - Run the following commands to set up the database:
   ```shell
   $ python3 manage.py makemigrations
