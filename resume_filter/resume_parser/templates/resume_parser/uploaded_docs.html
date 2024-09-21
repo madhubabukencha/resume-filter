@@ -7,21 +7,39 @@
 {% endblock head_title %}
 
 {% block content %}
-    <div class="wrapper">
+    <div class="doc-uploaded-wrapper">
+        <center><h3>Your Documents</h3></center>
         {% if object_list %}
-            <ul>
-                {% for document in object_list %}
-                    <li>
-                        <a href="{{ document.file.url }}" target="_blank">
-                            {{ document.file.name | slice:"10:" }} <!-- Show the filename -->
-                        </a> 
-                        (Uploaded on: {{ document.uploaded_date|date:"Y-m-d H:i" }})
-                    </li>
-                {% endfor %}
-            </ul>
+            <div class="table-wrapper">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>S.Num</th>
+                            <th>Unique Identifier</th>
+                            <th>Filename</th>
+                            <th>Uploaded Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ document.unique_identifier }}</td>
+                            <td>{{ document.original_filename | truncatechars:35 }}</td>
+                            <td>{{ document.uploaded_date|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <a href="{{ document.file.url }}" target="_blank" class="url-style">View</a> |
+                                <a href="{% url 'document-delete' document.pk %}" class="text-danger url-style"
+                                    onclick="return confirm('Are you sure you want to delete this document?');">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
             <p>You haven't uploaded any documents yet.</p>
         {% endif %}
     </div>
-{% endblock %}
-
+{% endblock content %}
