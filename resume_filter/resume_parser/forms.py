@@ -13,7 +13,10 @@ class DocumentUploadForm(forms.ModelForm):
         widgets = {
             'file': forms.ClearableFileInput(attrs={
                 'class': 'file-input',  # Custom CSS class
-                'id': 'file-upload',    # ID to match the label in your template
-                'accept': '.pdf, .zip',  # You can also restrict file types
+                # ID to match the label in your template
+                'id': 'file-upload',
+                # You can also restrict file types
+                # in future add ',zip' to take zip files as input
+                'accept': '.pdf',
             }),
         }
