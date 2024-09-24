@@ -42,8 +42,16 @@ class Document(models.Model):
         super().save(*args, **kwargs)
 
 
-# class ProcessedDocs(models.Model):
-#     """
-#     Table to store processed files information
-#     """
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+class ProcessedDoc(models.Model):
+    """
+    Model to store processed document data.
+    """
+    document = models.OneToOneField(Document, on_delete=models.CASCADE)
+    extracted_text = models.TextField()
+    extracted_tables = models.TextField()
+    processed_date = models.DateTimeField(auto_now_add=True)
+    entities_extracted = models.BooleanField(default=False)
+
+    def __str__(self):
+        # pylint: disable=no-member
+        return f"Processed: {self.document.original_filename}"
