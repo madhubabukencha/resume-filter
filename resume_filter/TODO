@@ -1,4 +1,0 @@
-- Combain PyMuPDF code and PDF plumber in separate folder
-- Make zip file code is present so that you can utilize it later
-- Add code in the views.py
-- Display status also in the Uploaded Docs

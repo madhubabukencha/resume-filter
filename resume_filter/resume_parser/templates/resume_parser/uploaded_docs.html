@@ -18,6 +18,7 @@
                             <th>Unique Identifier</th>
                             <th>Filename</th>
                             <th>Uploaded Date</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -28,6 +29,7 @@
                             <td>{{ document.unique_identifier }}</td>
                             <td>{{ document.original_filename | truncatechars:35 }}</td>
                             <td>{{ document.uploaded_date|date:"Y-m-d H:i" }}</td>
+                            <td>{{ document.status }}</td>
                             <td>
                                 <a href="{{ document.file.url }}" target="_blank" class="url-style">View</a> |
                                 <a href="{% url 'document-delete' document.pk %}" class="text-danger url-style"

@@ -37,4 +37,10 @@ def extract_tables(pdf_path: str) -> str:
             for table in tables:
                 df = pd.DataFrame(table)
                 tables_list.append(df)
-    
+
+    tables_text = ""
+    if tables_list:
+        for index, table in enumerate(tables_list):
+            tables_text += f"############# TABLE-{index + 1} #############\n"
+            tables_text += table.to_csv(index=None)
+    return tables_text
