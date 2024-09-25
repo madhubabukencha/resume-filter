@@ -1,7 +1,16 @@
+"""
+Here you can create your own filter that you can use in
+your django templates.
+
+To use the filter in your templates you have to load them
+like below on the top of templates document:
+{% load custom_filters %}
+"""
 import re
 from django import template
 
 register = template.Library()
+
 
 @register.filter
 def extract_email(value):
