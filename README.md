@@ -50,6 +50,10 @@ for detailed instructions: [Google Configuration Setup](https://github.com/madhu
   $ python3 manage.py makemigrations
   $ python3 manage.py migrate
   ```
+- If you want to access admin panel create super user
+  ```shell
+  $python3 manage.py createsuperuser
+  ```
 ### Run the Application
 - Start the development server
   ```

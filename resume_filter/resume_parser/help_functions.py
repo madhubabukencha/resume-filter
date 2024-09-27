@@ -5,6 +5,8 @@ parsing the text
 import fitz
 import pdfplumber
 import pandas as pd
+# from django.core.mail import send_mail
+# from django.conf import settings
 
 
 def extract_text_from_pdf(pdf_path: str) -> str:
@@ -22,7 +24,7 @@ def extract_text_from_pdf(pdf_path: str) -> str:
     return text
 
 
-def extract_tables(pdf_path: str) -> str:
+def extract_tables_from_pdf(pdf_path: str) -> str:
     """
     Function which extract tables from the given PDF resume
     :param pdf_path : Path of the PDF document
@@ -44,3 +46,22 @@ def extract_tables(pdf_path: str) -> str:
             tables_text += f"############# TABLE-{index + 1} #############\n"
             tables_text += table.to_csv(index=None)
     return tables_text
+
+
+# def send_processing_email(user_email, processed_files):
+#     """
+#     Send email notification about the processed files.
+#     """
+#     subject = f'{processed_files} have been processed'
+#     message = f"""
+# Dear Customer,
+
+# Your document {processed_files} is successfully processed.
+# Please visit our "Resume Filter" Website to see the results
+
+# Regards,
+# Resume Filter Team
+#     """
+#     email_from = settings.EMAIL_HOST_USER
+#     recipient_list = [user_email]
+#     send_mail(subject, message, email_from, recipient_list)
