@@ -6,7 +6,8 @@ class ResumeParserConfig(AppConfig):
     name = 'resume_parser'
 
     def ready(self) -> None:
-        # import all your signal files here
+        # All below import functions runs when you run server
         from . import signals
-
+        from . import jobs
+        jobs.start_scheduler()
 

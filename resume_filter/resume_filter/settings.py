@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'django_apscheduler',  # To schedule tasks
 ]
 
 MIDDLEWARE = [
@@ -147,6 +148,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Define documents directory as the media directory
 MEDIA_URL = '/documents/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'documents/')
+
+# Enable to see the log output of the scheduled jobs
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
 
 
 AUTHENTICATION_BACKENDS = [
