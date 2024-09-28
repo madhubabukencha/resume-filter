@@ -39,7 +39,7 @@ def start_scheduler() -> None:
     # Example of adding a job with a cron trigger
     scheduler.add_job(
         process_documents,
-        trigger=CronTrigger(minute="*/5"),  # Runs at every two minutes
+        trigger=CronTrigger(minute="*/1"),  # Runs at every one minutes
         id="process_documents",
         # only one instance of the job can run at any given time.
         # If the job is still running when its next scheduled run
@@ -55,7 +55,7 @@ def start_scheduler() -> None:
 
     scheduler.add_job(
         delete_old_job_executions,
-        trigger=CronTrigger(minute=0),  # Runs at every every hour
+        trigger=CronTrigger(minute="*/25"),  # Runs in every 25 minutes
         id="delete_old_job_executions",
         max_instances=1,
         replace_existing=True,

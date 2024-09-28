@@ -97,6 +97,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # SQLite has problem with handling  concurrent threads
+        # Eventually you get an error django.db.utils.OperationalError: database is locked
+        # Increasing time limit to avoid it.
+        'OPTIONS': {
+            'timeout': 40,
+        }
     }
 }
 
