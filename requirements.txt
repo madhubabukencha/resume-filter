@@ -15,3 +15,4 @@ PyMuPDF==1.24.10
 pdfplumber==0.11.4
 apscheduler
 django-apscheduler==0.6.2
+pandas==2.2.3
