@@ -28,4 +28,9 @@ jobs:
     - name: Run Tests
       run: |
         cd resume_filter
+        # Sometime migration framework is to slow
+        # Allows creating tables for apps without migrations
+        python manage.py migrate --run-syncdb 
+        python manage.py makemigration
+        python manage.py migrate 
         python manage.py test

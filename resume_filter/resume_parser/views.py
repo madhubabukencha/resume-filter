@@ -12,6 +12,9 @@ from .forms import DocumentUploadForm
 from .help_functions import (extract_text_from_pdf,
                              extract_tables_from_pdf)
 
+# pylint: disable=no-member
+# pylint: disable=unused-argument
+
 
 class DocumentUploadView(LoginRequiredMixin, CreateView):
     """
@@ -43,12 +46,16 @@ class DocumentListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # -uploaded_date: The minus sign (-) before the field name orders the
-        #  queryset in descending order. Without the minus sign, it would be in 
+        #  queryset in descending order. Without the minus sign, it would be in
         # ascending order (oldest to newest).
-        return Document.objects.filter(user=self.request.user).order_by('-uploaded_date')
+        return Document.objects.filter(
+               user=self.request.user).order_by('-uploaded_date')
 
 
 class DocumentDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    It is Delete view
+    """
     model = Document
     template_name = 'resume_parser/document_confirm_delete.html'
     success_url = reverse_lazy('uploaded-docs')
@@ -94,6 +101,7 @@ def process_documents(request):
             document.save()
 
             # Send email for a single processed document
-            # send_processing_email(document.user.email, [document.original_filename])
+            # send_processing_email(document.user.email,
+            #                       [document.original_filename])
 
     return "Documents processed successfully."
