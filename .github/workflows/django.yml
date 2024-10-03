@@ -28,8 +28,6 @@ jobs:
     - name: Run Tests
       run: |
         cd resume_filter
-        # Sometime migration framework is to slow
-        # Allows creating tables for apps without migrations
         python manage.py makemigrations
         python manage.py migrate 
         python manage.py test

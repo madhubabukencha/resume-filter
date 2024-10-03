@@ -7,11 +7,12 @@ from django.views.generic import CreateView, ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
-from .models import Document, ProcessedDoc
+from django.core.exceptions import ObjectDoesNotExist
+from .models import Document, ProcessedDoc, ExtractedEntities
 from .forms import DocumentUploadForm
 from .help_functions import (extract_text_from_pdf,
-                             extract_tables_from_pdf)
-
+                             extract_tables_from_pdf,
+                             extract_entities_with_chatgpt)
 # pylint: disable=no-member
 # pylint: disable=unused-argument
 
@@ -90,11 +91,38 @@ def process_documents(request):
             print(f"{base_file_name} processing is done")
 
             # Create a ProcessedDocument entry
-            ProcessedDoc.objects.create(
-                document=document,
-                extracted_text=extracted_text,
-                extracted_tables=extracted_tables,
+            print(f"Storing data in ProcessedDoc table for: {base_file_name}")
+            try:
+                # Check if the document has already been processed
+                processed_doc = ProcessedDoc.objects.get(document=document)
+                # If found, update the existing entry
+                processed_doc.extracted_text = extracted_text
+                processed_doc.extracted_tables = extracted_tables
+                processed_doc.save()
+            except ObjectDoesNotExist:
+                # If no entry exists, create a new one
+                processed_doc = ProcessedDoc.objects.create(
+                    document=document,
+                    extracted_text=extracted_text,
+                    extracted_tables=extracted_tables,
+                )
+            print("Storing data in ProcesedDoc table is done")
+
+            # Now extract entities using the ChatGPT API
+            response = extract_entities_with_chatgpt(extracted_text,
+                                                     extracted_tables)
+            
+            print(f"Extracting Entities for {base_file_name}")
+            ExtractedEntities.objects.create(
+                processed_doc=processed_doc,
+                education_summary=response["education-summary"],
+                work_experience_summary=response["work-experience-summary"],
+                overall_resume_summary=response["overall-resume-summary"],
+                projects_summary=response["projects-summary"],
+                skills=response["skills"],
+                contact_details=response["contact-details"]
             )
+            print("Extracting Entities is done")
 
             # Mark document as processed
             document.status = 'processed'
