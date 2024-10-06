@@ -20,3 +20,6 @@ pandas==2.2.3
 # For OpenAI
 openai==1.51.0
 PyYAML==6.0.2
+
+# For mysql
+mysqlclient==2.2.4
