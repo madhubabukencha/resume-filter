@@ -11,7 +11,7 @@ import pandas as pd
 import yaml
 from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI"))
+client = OpenAI(api_key=os.environ.get("OPENAI"))
 with open("resume_parser/prompts.yaml", "r", encoding="utf-8") as file:
     data = yaml.safe_load(file)
 
