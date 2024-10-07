@@ -7,10 +7,12 @@ from django.views.generic import CreateView, ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
-from .models import Document, ProcessedDoc
+from django.db import transaction
+from .models import Document, ProcessedDoc, ExtractedEntities
 from .forms import DocumentUploadForm
 from .help_functions import (extract_text_from_pdf,
-                             extract_tables_from_pdf)
+                             extract_tables_from_pdf,
+                             extract_entities_with_chatgpt)
 
 # pylint: disable=no-member
 # pylint: disable=unused-argument
@@ -67,41 +69,71 @@ class DocumentDeleteView(LoginRequiredMixin, DeleteView):
 
 def process_documents(request):
     """
-    Find unprocessed documents, extract data, and mark them as processed.
+    Process unprocessed documents and store extracted data.
 
-    This function executes,
-    - When your run a below command:
+     This function executes,
+    - When you run a command:
       `python manage.py process_documents`
     - Also schedule periodically using apscheduler
     """
     unprocessed_docs = Document.objects.filter(status='unprocessed')
 
     for document in unprocessed_docs:
-        # # If the file is a ZIP, unzip and process its contents
-        # if document.file.name.endswith('.zip'):
-        #     process_zip_file(document)
         if document.file.name.endswith('.pdf'):
-            # Process a single PDF file
             file_path = document.file.path
             base_file_name = os.path.basename(file_path)
             print(f"Started Processing: {base_file_name}")
+
             extracted_text = extract_text_from_pdf(file_path)
             extracted_tables = extract_tables_from_pdf(file_path)
             print(f"{base_file_name} processing is done")
 
-            # Create a ProcessedDocument entry
-            ProcessedDoc.objects.create(
-                document=document,
-                extracted_text=extracted_text,
-                extracted_tables=extracted_tables,
-            )
+            # Using atomic transaction to prevent race conditions
+            # and ensure integrity
+            with transaction.atomic():
+                # Lock the document record to prevent duplicates during
+                # concurrent processing
+                document = Document.objects.select_for_update().get(
+                           pk=document.pk)
 
-            # Mark document as processed
+                # Check if the document already has a processed record
+                processed_doc, created = ProcessedDoc.objects.get_or_create(
+                    document=document,
+                    defaults={
+                        'extracted_text': extracted_text,
+                        'extracted_tables': extracted_tables,
+                    }
+                )
+
+                if not created:
+                    # If already exists, update the existing record
+                    processed_doc.extracted_text = extracted_text
+                    processed_doc.extracted_tables = extracted_tables
+                    processed_doc.save()
+
+            print(f"Storing data in ProcessedDoc table for: {base_file_name}")
+
+            # Now extract entities using the ChatGPT API
+            response = extract_entities_with_chatgpt(extracted_text,
+                                                     extracted_tables)
+            print(f"Extracting Entities for {base_file_name}")
+            # Update or create ExtractedEntities
+            ExtractedEntities.objects.update_or_create(
+                processed_doc=processed_doc,
+                defaults={
+                    'education_summary': response.get("education-summary"),
+                    'work_experience_summary': response.get(
+                                               "work-experience-summary"),
+                    'overall_resume_summary': response.get(
+                                              "overall-resume-summary"),
+                    'projects_summary': response.get("projects-summary"),
+                    'skills': response.get("skills"),
+                    'contact_details': response.get("contact-details")
+                }
+            )
+            print("Extracting Entities is done")
+
+            # Mark the document as processed
             document.status = 'processed'
             document.save()
-
-            # Send email for a single processed document
-            # send_processing_email(document.user.email,
-            #                       [document.original_filename])
-
     return "Documents processed successfully."

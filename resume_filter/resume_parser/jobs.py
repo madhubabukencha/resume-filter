@@ -41,15 +41,10 @@ def start_scheduler() -> None:
         process_documents,
         trigger=CronTrigger(minute="*/1"),  # Runs at every one minutes
         id="process_documents",
-        # only one instance of the job can run at any given time.
-        # If the job is still running when its next scheduled run
-        # time comes around, the next instance of the job will be skipped.
-        # Keep one is good if you are writing something to databse
-        # to avoid conflicts
-        max_instances=1,
-        # does not stop or interrupt a job that is already running.
-        # It only updates the job's configuration for future executions.
-        replace_existing=True,
+        max_instances=1,  # Only one instance can run at a time
+        replace_existing=True,  # Replace existing job if already exists
+        misfire_grace_time=300,  # Allow a grace period of 5 minutes
+        coalesce=True,  # If multiple triggers missed, only run once
         args=[None,]
     )
 
@@ -57,8 +52,10 @@ def start_scheduler() -> None:
         delete_old_job_executions,
         trigger=CronTrigger(minute="*/25"),  # Runs in every 25 minutes
         id="delete_old_job_executions",
-        max_instances=1,
-        replace_existing=True,
+        max_instances=1,  # Only one instance can run at a time
+        replace_existing=True,  # Replace existing job if already exists
+        misfire_grace_time=300,  # Allow a grace period of 5 minutes
+        coalesce=True,  # If multiple triggers missed, only run once
     )
     register_events(scheduler)
     # Start the scheduler

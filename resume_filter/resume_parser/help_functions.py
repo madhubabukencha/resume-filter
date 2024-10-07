@@ -2,11 +2,18 @@
 This file contains all the function required for
 parsing the text
 """
+import os
 import fitz
 import pdfplumber
 import pandas as pd
 # from django.core.mail import send_mail
 # from django.conf import settings
+import yaml
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+with open("resume_parser/prompts.yaml", "r", encoding="utf-8") as file:
+    data = yaml.safe_load(file)
 
 
 def extract_text_from_pdf(pdf_path: str) -> str:
@@ -65,3 +72,44 @@ def extract_tables_from_pdf(pdf_path: str) -> str:
 #     email_from = settings.EMAIL_HOST_USER
 #     recipient_list = [user_email]
 #     send_mail(subject, message, email_from, recipient_list)
+
+
+def get_completion(messages: list, model="gpt-4o-mini-2024-07-18"):
+    """
+    Takes input and generates the output using ChatGPT API
+    :param messages: system and user messages
+    :type  messages: List
+    :param model: model version
+    :type  model: str
+    """
+    completion = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        # temperature: A higher value, such as 0.8,
+        # makes the answers more diverse,while a lower value,
+        #  like 0.2, makes them more focused and deterministic.
+        temperature=0.2,
+    )
+    return completion.choices[0].message.content
+
+
+def extract_entities_with_chatgpt(text: str, tables: str) -> dict:
+    """
+    Function which creates a dictiory with extracted summaries
+
+    :param text: Extracted Text from Resume
+    :type  text: str
+    :param tables: Extracted Tables from Resume
+    :type  table: str
+
+    :returns: returns a list of extracted summaries and entities
+    :rtype: dict
+    """
+    entities = {}
+    for key in data.keys():
+        prompt = data[key]["prompt"].replace(
+                 "{TEXT}", text).replace("{TABLES}", tables)
+        messages = [{'role': 'system', 'content': data[key]["system-message"]},
+                    {'role': 'user', 'content': prompt}]
+        entities[key] = get_completion(messages)
+    return entities

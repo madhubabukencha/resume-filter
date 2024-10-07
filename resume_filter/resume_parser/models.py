@@ -50,8 +50,25 @@ class ProcessedDoc(models.Model):
     extracted_text = models.TextField()
     extracted_tables = models.TextField()
     processed_date = models.DateTimeField(auto_now_add=True)
-    entities_extracted = models.BooleanField(default=False)
 
     def __str__(self):
         # pylint: disable=no-member
         return f"Processed: {self.document.original_filename}"
+
+
+class ExtractedEntities(models.Model):
+    """
+    Model to store the extracted resume data.
+    Each record corresponds to a single document.
+    """
+    processed_doc = models.OneToOneField(ProcessedDoc, on_delete=models.CASCADE)
+    education_summary = models.TextField(null=True, blank=True)
+    work_experience_summary = models.TextField(null=True, blank=True)
+    overall_resume_summary = models.TextField(null=True, blank=True)
+    projects_summary = models.TextField(null=True, blank=True)
+    skills = models.TextField(null=True, blank=True)
+    contact_details = models.TextField(null=True, blank=True)
+    extracted_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Entities for: {self.processed_doc.document.original_filename}"
