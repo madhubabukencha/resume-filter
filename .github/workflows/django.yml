@@ -8,12 +8,33 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
       matrix:
         python-version: [3.11, 3.12]
+
+    services:
+      mysql:
+        # services are additional containers (like databases or other services)
+        # that can be set up alongside your main job runner environment. These
+        # services run in separate Docker containers and can communicate with 
+        # the main job through the network
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        # we are using a health check to wait for MySQL to be fully 
+        # initialized and ready before the main job attempts to interact with it
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
     - uses: actions/checkout@v4
@@ -28,8 +49,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
+    - name: Wait for MySQL to be ready
+      run: |
+        until mysqladmin ping -h "127.0.0.1" --silent; do
+          echo "Waiting for MySQL to be ready..."
+          sleep 5
+        done
+    
     - name: Set up environment variables
-      run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+      run: |
+        echo "DB_NAME=test_db" >> $GITHUB_ENV
+        echo "DB_USER=test_user" >> $GITHUB_ENV
+        echo "DB_PASSWORD=test_password" >> $GITHUB_ENV
+        echo "DB_HOST=127.0.0.1" >> $GITHUB_ENV
+        echo "DB_PORT=3306" >> $GITHUB_ENV
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
     
     - name: Run Tests
       run: |

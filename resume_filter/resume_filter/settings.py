@@ -96,11 +96,11 @@ WSGI_APPLICATION = 'resume_filter.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'resume_filter',    # Name of the MySQL database
-        'USER': 'django-user',      # MySQL username
-        'PASSWORD': os.environ.get("DB_PASSWORD"),  # MySQL password
-        'HOST': 'localhost',        # Database server (localhost if running locally)
-        'PORT': '3306',             # Default MySQL port
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 
