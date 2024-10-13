@@ -1,12 +1,10 @@
 ## About Resume Filter
-Resume Filter is a web-based application built using the Django Framework to
-help Human Resource teams. You simply upload a PDF resume or a collection of
-PDF resumes in zip file format, and we extract valuable information for you.
+Searching for required skills in a large amount of resumes is a tedious task for HR teams. Resume Filter is a web-based application built using the Django framework to assist Human Resource teams. In the Resume Filter app, you simply upload PDF resumes, and we extract valuable information for you. Once your documents are processed, you can filter the required skills by using key terms like "Python," "Java," "Sales Manager," etc., and you can download the data in either "Excel" or "CSV" file formats.
 
 ## Environment Setup
-These steps will help you run this project on your local machine.
+These steps will help you to run this project on your local machine.
 ### Prerequisites
-- Make sure `Python 3.11` or above version installed on your system.
+- Make sure have `Python 3.11` or above version installed on your system.
 ### Create Virtual Environment
 - Create a virtual environment named resume-filter-venv using the following command:
   ```bash
@@ -20,8 +18,8 @@ These steps will help you run this project on your local machine.
   ```
   resume-filter-venv\Scripts\activate
   ```
-### Project Setup
-- Clone this repository: [resume_filter](https://github.com/madhubabukencha/resume-filter) repo on your local machine.
+### Installing Dependencies
+- Clone Repository: [resume-filter](https://github.com/madhubabukencha/resume-filter) repo on your local machine.
 - Change directory to the project root:
   ```
   cd resume-filter
@@ -30,7 +28,7 @@ These steps will help you run this project on your local machine.
   ```
   pip install -r requirements.txt
   ```
-### Google Authentication
+## Google Authentication
 This application uses Google authentication. So, create a `.env` file in
 repository root directory with following variables.  Refer to the documentation
 for detailed instructions: [Google Configuration Setup](https://github.com/madhubabukencha/django/blob/main/chap002-django-auth/google-config-setup.md) doc.
@@ -40,7 +38,22 @@ for detailed instructions: [Google Configuration Setup](https://github.com/madhu
   EMAIL_HOST_USER='your-gmail-id@gmail.com'
   EMAIL_HOST_PASSWORD='your_email_host_password'
   ```
-### Database Setup
+## Database Setup
+- This project is using MySQL Database, so add below
+  environment variables to your `.env` file. If you are using MySQL first time or 
+  migrating from SQLite to MySQL refer migration document [here](https://github.com/madhubabukencha/django/tree/main/chap003-django-db/mysql-setup).
+  ```
+  DB_NAME="your_db_name"
+  DB_USER="your_db_user_name"
+  DB_PASSWORD="db_user_password"
+  DB_HOST="localhost"
+  DB_PORT="3306"
+  ```
+- Now login to MySQL Workbench with your MySQL username and password and create a new database. We are going to use it
+to store our tables. Make sure database is empty to avoid migration issues.
+  ```
+  CREATE DATABASE your_database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  ```
 - Change directory to
   ```
   cd resume-filter/resume_filter
@@ -54,13 +67,21 @@ for detailed instructions: [Google Configuration Setup](https://github.com/madhu
   ```shell
   $python3 manage.py createsuperuser
   ```
-### Run the Application
+## OpenAI setup
+- We are using OpenAI to generate various summaries from the extracted resume text. To make OpenAI work add below variable in your `.env` file
+  ```
+  OPENAI_API_KEY="your_open_api_key"
+  ```
+## Run the Application
 - Start the development server
   ```
   python3 manage.py runserver
   ```
 ### Access the Application
 - You can now access the application in your web browser at http://127.0.0.1:8000/.
+
+### Sample Dataset
+- Download sample resume dataset from kaggle [website](https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset?resource=download)
 
 ## Troubleshooting
 Here you can find solutions for possible errors

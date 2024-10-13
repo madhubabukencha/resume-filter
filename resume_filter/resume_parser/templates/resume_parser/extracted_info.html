@@ -9,8 +9,8 @@
 
 {% block content %}
 <div class="container mt-5">
-    <center><h3>Extracted Entities</h3></center>
-    <hr>
+    <center><h3 style="color: white;">Extracted Entities</h3></center>
+    <hr style="color: white;">
     <!-- Search Bar -->
     <form method="get" class="form-inline mb-4">
         <div class="input-group">
@@ -26,7 +26,6 @@
                                          that the search term isn't lost after a form 
                                          submission
             -->
-
             <input class="form-control"
                    type="search"
                    placeholder="Search by filename, UUID, or skills"
@@ -107,47 +106,61 @@
         </table>
     </div>
 
-    <!-- Pagination controls -->
+    <!-- Pagination controls with ellipses -->
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
+            
+            <!-- "First" and "Previous" buttons -->
             {% if page_obj.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="First">
-                    <span aria-hidden="true">&laquo;&laquo;</span>
+                    <span aria-hidden="true">&laquo;&laquo;</span> First
                 </a>
             </li>
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
+                    <span aria-hidden="true">&laquo;</span> Previous
                 </a>
             </li>
             {% endif %}
 
-            <!-- Display page numbers -->
+            <!-- Ellipsis if current page is beyond 3rd page -->
+            {% if page_obj.number > 3 %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+
+            <!-- Display only a few pages around the current page -->
             {% for i in paginator.page_range %}
-            <li class="page-item {% if page_obj.number == i %}active{% endif %}">
-                <a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a>
-            </li>
+                {% if i >= page_obj.number|add:'-2' and i <= page_obj.number|add:'2' %}
+                    <li class="page-item {% if page_obj.number == i %}active{% endif %}">
+                        <a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a>
+                    </li>
+                {% endif %}
             {% endfor %}
 
+            <!-- Ellipsis if there are more than 3 pages after current set -->
+            {% if page_obj.number < paginator.num_pages|add:'-2' %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+
+            <!-- "Next" and "Last" buttons -->
             {% if page_obj.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
+                    Next <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
             <li class="page-item">
                 <a class="page-link" href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Last">
-                    <span aria-hidden="true">&raquo;&raquo;</span>
+                    Last <span aria-hidden="true">&raquo;&raquo;</span>
                 </a>
             </li>
             {% endif %}
         </ul>
     </nav>
-
     {% else %}
     <br><br>
-    <center><h5>No extracted entities found.</h5></center>
+    <center><h5 style="color: white;">No extracted entities found.</h5></center>
     {% endif %}
     
     <!-- Download Button -->
@@ -155,8 +168,8 @@
         <input type="hidden" name="q" value="{{ request.GET.q }}">
         <div class="input-group">
             <select name="format" class="form-select" aria-label="Download Format">
-                <option value="csv">CSV (All data download if no filter applied)</option>
-                <option value="excel">Excel (All  data download if no filter applied)</option>
+                <option value="csv">CSV (All the data download if no filter applied)</option>
+                <option value="excel">Excel (All the data download if no filter applied)</option>
             </select>
             <button type="submit" class="btn btn-outline-primary"><b>Download Data</b></button>
         </div>

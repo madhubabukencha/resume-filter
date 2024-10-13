@@ -165,10 +165,11 @@ class ExtractedEntitiesListView(LoginRequiredMixin, ListView):
         )
 
         if query:
+            reg_que = fr'\b{query}\b'
             queryset = queryset.filter(
-              Q(processed_doc__document__original_filename__iregex=fr'\b{query}\b') |
-              Q(processed_doc__document__unique_identifier__iregex=fr'\b{query}\b') |
-              Q(skills__iregex=fr'\b{query}\b')
+              Q(processed_doc__document__original_filename__iregex=reg_que) |
+              Q(processed_doc__document__unique_identifier__iregex=reg_que) |
+              Q(skills__iregex=reg_que)
             )
 
         return queryset.order_by('-extracted_date')
@@ -177,8 +178,11 @@ class ExtractedEntitiesListView(LoginRequiredMixin, ListView):
 def download_filtered_data(request):
     """
     Export filtered ExtractedEntities data to either CSV or Excel.
-    Includes: unique_identifier, original_filename, and all fields from ExtractedEntities.
+    Includes: unique_identifier, original_filename, and all fields
+              from ExtractedEntities.
     """
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-statements
     # Filter queryset for the logged-in user and apply search filters
     query = request.GET.get('q')
     queryset = ExtractedEntities.objects.filter(
@@ -203,9 +207,9 @@ def download_filtered_data(request):
 
         # Define Excel headers
         headers = [
-            'Unique Identifier', 
+            'Unique Identifier',
             'Original Filename',
-            'Education Summary', 
+            'Education Summary',
             'Work Experience Summary',
             'Overall Resume Summary',
             'Projects Summary',
@@ -217,7 +221,8 @@ def download_filtered_data(request):
 
         # Write the data rows
         for entity in queryset:
-            unique_identifier = str(entity.processed_doc.document.unique_identifier)
+            unique_identifier = str(
+                            entity.processed_doc.document.unique_identifier)
             original_filename = entity.processed_doc.document.original_filename
             education_summary = entity.education_summary
             work_experience_summary = entity.work_experience_summary
@@ -225,7 +230,6 @@ def download_filtered_data(request):
             projects_summary = entity.projects_summary
             skills = entity.skills
             contact_details = entity.contact_details
-            
             # Format extracted_date to 'dd-mm-yyyy hh:mm:ss'
             extracted_date = entity.extracted_date
             if extracted_date:
@@ -246,8 +250,11 @@ def download_filtered_data(request):
             ])
 
         # Create the HttpResponse object for Excel
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="extracted_entities.xlsx"'
+        con_type = "application/\
+                    vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response = HttpResponse(content_type=con_type)
+        cont_dis = 'attachment; filename="extracted_entities.xlsx"'
+        response['Content-Disposition'] = cont_dis
 
         # Save the workbook to the response
         workbook.save(response)
@@ -255,16 +262,17 @@ def download_filtered_data(request):
     else:  # Default to CSV format
         # Create the HttpResponse object for CSV
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="extracted_entities.csv"'
+        cont_dis = 'attachment; filename="extracted_entities.csv"'
+        response['Content-Disposition'] = cont_dis
 
         # Write the CSV data
         writer = csv.writer(response)
 
         # Define CSV headers
         writer.writerow([
-            'Unique Identifier', 
+            'Unique Identifier',
             'Original Filename',
-            'Education Summary', 
+            'Education Summary',
             'Work Experience Summary',
             'Overall Resume Summary',
             'Projects Summary',
@@ -275,7 +283,8 @@ def download_filtered_data(request):
 
         # Write the data rows
         for entity in queryset:
-            unique_identifier = str(entity.processed_doc.document.unique_identifier)
+            unique_identifier = str(
+                entity.processed_doc.document.unique_identifier)
             original_filename = entity.processed_doc.document.original_filename
             education_summary = entity.education_summary
             work_experience_summary = entity.work_experience_summary
@@ -283,7 +292,6 @@ def download_filtered_data(request):
             projects_summary = entity.projects_summary
             skills = entity.skills
             contact_details = entity.contact_details
-            
             # Format extracted_date to 'dd-mm-yyyy hh:mm:ss'
             extracted_date = entity.extracted_date
             if extracted_date:
