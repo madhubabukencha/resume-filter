@@ -41,6 +41,10 @@ class DocumentUploadView(LoginRequiredMixin, CreateView):
         """
         It will redirect to resume-filter-home once document is uploaded
         """
+        # reverse returns absolute url by using name that
+        # was need by get_success_url. You should not use
+        # redirect here because it return Some HttpResponse that throws an
+        # Error
         return reverse('resume-filter-home')
 
 
