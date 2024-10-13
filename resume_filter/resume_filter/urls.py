@@ -14,13 +14,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
-from django.contrib import admin
-from django.urls import path, include
-from allauth.account.views import LoginView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path, include
+from django.shortcuts import redirect
+from allauth.account.views import LoginView
 
+
+# Custom 404 error handler
+def custom_404(request, exception=None):
+    """
+    This function redirects user to respective page
+    based on user's login. It when only works when
+    DEBUG=False
+    """
+    if request.user.is_authenticated:
+        # Redirect authenticated users to home page
+        return redirect('resume-filter-home')
+    # else redirect to login page
+    return redirect('custom_login')
+
+
+# Add the custom 404 handler here in the root urls.py
+handler404 = 'resume_filter.urls.custom_404'
 
 urlpatterns = [
     path('resume-filter-db/', admin.site.urls),
@@ -31,4 +48,5 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

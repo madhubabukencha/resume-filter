@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import dotenv
 import os
+import dotenv
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,7 +31,7 @@ DEBUG = True
 if DEBUG:
     dotenv.load_dotenv("../.env")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -64,7 +64,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
     # Developer Added middlewares
     'allauth.account.middleware.AccountMiddleware',
 ]
@@ -172,7 +171,8 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Default ModelBackend
-    'allauth.account.auth_backends.AuthenticationBackend',  # Allauth authentication backend for social authentication
+    # Allauth authentication backend for social authentication
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 # Custom forms
