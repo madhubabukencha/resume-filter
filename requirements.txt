@@ -26,3 +26,6 @@ mysqlclient==2.2.4
 
 # For displaying popup content
 markdown==3.7
+
+# For downloading data in Excel
+openpyxl==3.1.5
