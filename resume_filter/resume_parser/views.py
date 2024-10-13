@@ -2,12 +2,16 @@
 Resume Parser Views
 """
 import os
+import csv
+from openpyxl import Workbook
 from django.urls import reverse
 from django.views.generic import CreateView, ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db import transaction
+from django.db.models import Q
+from django.http import HttpResponse
 from .models import Document, ProcessedDoc, ExtractedEntities
 from .forms import DocumentUploadForm
 from .help_functions import (extract_text_from_pdf,
@@ -16,6 +20,7 @@ from .help_functions import (extract_text_from_pdf,
 
 # pylint: disable=no-member
 # pylint: disable=unused-argument
+# pylint: disable=too-many-ancestors
 
 
 class DocumentUploadView(LoginRequiredMixin, CreateView):
@@ -56,10 +61,11 @@ class DocumentListView(LoginRequiredMixin, ListView):
 
 class DocumentDeleteView(LoginRequiredMixin, DeleteView):
     """
-    It is Delete view
+    It is Delete view, Django asks you to create for all delete views
     """
     model = Document
     template_name = 'resume_parser/document_confirm_delete.html'
+    # Redirects you after successful deletion
     success_url = reverse_lazy('uploaded-docs')
 
     def delete(self, request, *args, **kwargs):
@@ -74,7 +80,7 @@ def process_documents(request):
      This function executes,
     - When you run a command:
       `python manage.py process_documents`
-    - Also schedule periodically using apscheduler
+    - Also scheduled periodically using apscheduler
     """
     unprocessed_docs = Document.objects.filter(status='unprocessed')
 
@@ -137,3 +143,164 @@ def process_documents(request):
             document.status = 'processed'
             document.save()
     return "Documents processed successfully."
+
+
+class ExtractedEntitiesListView(LoginRequiredMixin, ListView):
+    """
+    View to display and search extracted entities
+    """
+    model = ExtractedEntities
+    template_name = 'resume_parser/extracted_info.html'
+    # You will access data in the web template using this name
+    context_object_name = 'entities_list'
+    paginate_by = 4  # If you want to add pagination
+
+    def get_queryset(self):
+        """
+        Optionally filter the queryset based on search input.
+        """
+        query = self.request.GET.get('q')
+        queryset = ExtractedEntities.objects.filter(
+            processed_doc__document__user=self.request.user
+        )
+
+        if query:
+            queryset = queryset.filter(
+              Q(processed_doc__document__original_filename__iregex=fr'\b{query}\b') |
+              Q(processed_doc__document__unique_identifier__iregex=fr'\b{query}\b') |
+              Q(skills__iregex=fr'\b{query}\b')
+            )
+
+        return queryset.order_by('-extracted_date')
+
+
+def download_filtered_data(request):
+    """
+    Export filtered ExtractedEntities data to either CSV or Excel.
+    Includes: unique_identifier, original_filename, and all fields from ExtractedEntities.
+    """
+    # Filter queryset for the logged-in user and apply search filters
+    query = request.GET.get('q')
+    queryset = ExtractedEntities.objects.filter(
+        processed_doc__document__user=request.user
+    )
+
+    if query:
+        queryset = queryset.filter(
+            Q(processed_doc__document__original_filename__icontains=query) |
+            Q(processed_doc__document__unique_identifier__icontains=query) |
+            Q(skills__icontains=query)
+        )
+
+    # Check the desired format from query parameters
+    format_type = request.GET.get('format', 'csv').lower()  # Default to 'csv'
+
+    if format_type == 'excel':
+        # Create a workbook and a worksheet for Excel
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = "Extracted Entities"
+
+        # Define Excel headers
+        headers = [
+            'Unique Identifier', 
+            'Original Filename',
+            'Education Summary', 
+            'Work Experience Summary',
+            'Overall Resume Summary',
+            'Projects Summary',
+            'Skills',
+            'Contact Details',
+            'Extracted Date'
+        ]
+        worksheet.append(headers)
+
+        # Write the data rows
+        for entity in queryset:
+            unique_identifier = str(entity.processed_doc.document.unique_identifier)
+            original_filename = entity.processed_doc.document.original_filename
+            education_summary = entity.education_summary
+            work_experience_summary = entity.work_experience_summary
+            overall_resume_summary = entity.overall_resume_summary
+            projects_summary = entity.projects_summary
+            skills = entity.skills
+            contact_details = entity.contact_details
+            
+            # Format extracted_date to 'dd-mm-yyyy hh:mm:ss'
+            extracted_date = entity.extracted_date
+            if extracted_date:
+                extracted_date = extracted_date.strftime('%d-%m-%Y %H:%M:%S')
+            else:
+                extracted_date = None
+
+            worksheet.append([
+                unique_identifier,
+                original_filename,
+                education_summary,
+                work_experience_summary,
+                overall_resume_summary,
+                projects_summary,
+                skills,
+                contact_details,
+                extracted_date,
+            ])
+
+        # Create the HttpResponse object for Excel
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="extracted_entities.xlsx"'
+
+        # Save the workbook to the response
+        workbook.save(response)
+
+    else:  # Default to CSV format
+        # Create the HttpResponse object for CSV
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="extracted_entities.csv"'
+
+        # Write the CSV data
+        writer = csv.writer(response)
+
+        # Define CSV headers
+        writer.writerow([
+            'Unique Identifier', 
+            'Original Filename',
+            'Education Summary', 
+            'Work Experience Summary',
+            'Overall Resume Summary',
+            'Projects Summary',
+            'Skills',
+            'Contact Details',
+            'Extracted Date'
+        ])
+
+        # Write the data rows
+        for entity in queryset:
+            unique_identifier = str(entity.processed_doc.document.unique_identifier)
+            original_filename = entity.processed_doc.document.original_filename
+            education_summary = entity.education_summary
+            work_experience_summary = entity.work_experience_summary
+            overall_resume_summary = entity.overall_resume_summary
+            projects_summary = entity.projects_summary
+            skills = entity.skills
+            contact_details = entity.contact_details
+            
+            # Format extracted_date to 'dd-mm-yyyy hh:mm:ss'
+            extracted_date = entity.extracted_date
+            if extracted_date:
+                extracted_date = extracted_date.strftime('%d-%m-%Y %H:%M:%S')
+            else:
+                extracted_date = None
+
+            writer.writerow([
+                unique_identifier,
+                original_filename,
+                education_summary,
+                work_experience_summary,
+                overall_resume_summary,
+                projects_summary,
+                skills,
+                contact_details,
+                extracted_date,
+            ])
+
+    return response
