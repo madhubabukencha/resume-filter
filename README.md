@@ -1,6 +1,9 @@
 ## About Resume Filter
 Searching for required skills in a large amount of resumes is a tedious task for HR teams. Resume Filter is a web-based application built using the Django framework to assist Human Resource teams. In the Resume Filter app, you simply upload PDF resumes, and we extract valuable information for you. Once your documents are processed, you can filter the required skills by using key terms like "Python," "Java," "Sales Manager," etc., and you can download the data in either "Excel" or "CSV" file formats.
 
+You can watch below demo video:<br>
+[![resume filter](images/login.png)](https://www.youtube.com/watch?v=kOLvqkzzOTE)
+
 ## Environment Setup
 These steps will help you to run this project on your local machine.
 ### Prerequisites
